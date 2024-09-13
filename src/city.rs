@@ -4,27 +4,27 @@ use std::cmp;
 #[derive(Default, Clone, PartialEq, Debug)]
 pub struct Location {
     pub name: String,
-    pub coord: (u8, u8),
+    pub coord: (i32, i32),
 }
 #[derive(Default, Clone, PartialEq, Debug)]
 pub struct Activity {
     pub location: Location,
-    price: u8,
-    id: u8,
+    price: i32,
+    id: i32,
 }
 #[derive(Clone, PartialEq, Debug)]
 pub struct City { // impl Location for City!!!
-    activities_clustered: Array2<u8>,
+    activities_clustered: Array2<i32>,
     activities: Vec<Activity>, //HASHMAP??
     pub location: Location,
 }
-pub fn get_max_values(this : (u8,u8),other : (u8,u8)) -> (u8,u8){
+pub fn get_max_values(this : (i32,i32),other : (i32,i32)) -> (i32,i32){
     let i = cmp::max(this.0, other.0);
     let j = cmp::max(this.1, other.1);
     (i,j)
 }
 //impl Location{
-//    pub fn new(coord:(u8,u8)) -> Self{
+//    pub fn new(coord:(i32,i32)) -> Self{
 //        Location{name:"".to_string(),coord:(coord.0,coord.1)}
 //    }
 //}
@@ -41,7 +41,7 @@ impl City {
         // TODO Push activity if not error
         self.activities.push(activity)
     }
-    pub fn remove_activity(&mut self, id: u8) {
+    pub fn remove_activity(&mut self, id: i32) {
         //TODO
         self.activities.remove(id.try_into().unwrap());
     }
@@ -49,7 +49,7 @@ impl City {
         // TODO Keep or remove? pretty print activities
         &self.activities
     }
-    pub fn update_activity(&mut self, id: u8, activity: Activity) {
+    pub fn update_activity(&mut self, id: i32, activity: Activity) {
         // TODO
         self.activities.insert(id.try_into().unwrap(), activity);
         self.activities.remove((id + 1).try_into().unwrap());

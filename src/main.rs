@@ -54,18 +54,18 @@ impl CityCache {
     }
     fn construct_graph(&self) -> Array<String,Ix2> {
         let cache_len =  self.city_cache.len();
-        let mut coords_list :Vec<(&str,u8,u8)> = Vec::with_capacity(cache_len);
+        let mut coords_list :Vec<(&str,i32,i32)> = Vec::with_capacity(cache_len);
         //TODO panics
-        let mut max_coords:(u8,u8) = (0,0); // Iterates twice which seems wastefull
+        let mut max_coords:(i32,i32) = (0,0); // Iterates twice which seems wastefull
         for (name,city) in self.city_cache.iter() {
             let cur_coords = city.location.coord;
             coords_list.push((name,cur_coords.0,cur_coords.1));
             max_coords = get_max_values(max_coords, cur_coords);
         }
-        let mut cities_clustered: Array<String,Ix2>= Array::default(((max_coords.0 + 1).into(),(max_coords.1 +1).into()));
+        let mut cities_clustered: Array<String,Ix2>= Array::default(((max_coords.0 + 1) as usize,(max_coords.1 +1) as usize));
         for (city,i,j) in coords_list {
             //println!("{}, {}",i,j);
-           cities_clustered[[i.into(),j.into()]] = city.to_string() ;
+           cities_clustered[[i as usize,j as usize]] = city.to_string() ;
         };
         cities_clustered
     } 
@@ -106,7 +106,7 @@ impl State {
             None => Err("No Cities in Cache".to_string()),
         }
     }
-    pub fn get_points(&self) -> Vec<(u8, u8)> {
+    pub fn get_points(&self) -> Vec<(i32, i32)> {
         self.cache
             .clone()
             .unwrap_or_default()
@@ -121,28 +121,28 @@ impl State {
     pub fn tmp_cluster_activities(&mut self) {}
 }
 
-//fn plot(state: &State) {
-//    let data1: &[(u8, u8)] = &state.get_points();
-//    let root_area = BitMapBackend::new("2.6.png", (1000, 1000)).into_drawing_area();
-//    root_area.fill(&WHITE).unwrap();
-//
-//    let mut ctx = ChartBuilder::on(&root_area)
-//        .set_label_area_size(LabelAreaPosition::Left, 40)
-//        .set_label_area_size(LabelAreaPosition::Bottom, 40)
-//        .caption("Cities scattered", ("sans-serif", 40))
-//        .build_cartesian_2d(0..20, 0..20)
-//        .unwrap();
-//
-//    ctx.configure_mesh().draw().unwrap();
-//
-//    ctx.draw_series(
-//        data1
-//            .iter()
-//            .map(|point| TriangleMarker::new(*point, 5, BLUE)),
-//    )
-//    .unwrap();
-//    //const data1: [(u8, u8); 30] =  [(-3, 1), (-2, 3), (4, 2), (3, 0), (6, -5), (3, 11), (6, 0), (2, 14), (3, 9), (14, 7), (8, 11), (10, 16), (7, 15), (13, 8), (17, 14), (13, 17), (19, 11), (18, 8), (15, 8), (23, 23), (15, 20), (22, 23), (22, 21), (21, 30), (19, 28), (22, 23), (30, 23), (26, 35), (33, 19), (26, 19)];
-//}
+fn plot(state: &State) {
+    let data1: &[(i32, i32)] = &state.get_points();
+    let root_area = BitMapBackend::new("2.6.png", (1000, 1000)).into_drawing_area();
+    root_area.fill(&WHITE).unwrap();
+
+    let mut ctx = ChartBuilder::on(&root_area)
+        .set_label_area_size(LabelAreaPosition::Left, 40)
+        .set_label_area_size(LabelAreaPosition::Bottom, 40)
+        .caption("Cities scattered", ("sans-serif", 40))
+        .build_cartesian_2d(0..20, 0..20)
+        .unwrap();
+
+    ctx.configure_mesh().draw().unwrap();
+
+    ctx.draw_series(
+        data1
+            .iter()
+            .map(|point| TriangleMarker::new(*point, 5, BLUE)),
+    )
+    .unwrap();
+    //const data1: [(i32, i32); 30] =  [(-3, 1), (-2, 3), (4, 2), (3, 0), (6, -5), (3, 11), (6, 0), (2, 14), (3, 9), (14, 7), (8, 11), (10, 16), (7, 15), (13, 8), (17, 14), (13, 17), (19, 11), (18, 8), (15, 8), (23, 23), (15, 20), (22, 23), (22, 21), (21, 30), (19, 28), (22, 23), (30, 23), (26, 35), (33, 19), (26, 19)];
+}
 fn main() {
     let mut model: State = Default::default();
     let city2: City = City::new(Location {
@@ -167,7 +167,7 @@ fn main() {
     // sample between 1 and 10 points
     for i in range(0.0, 10.0, 1.0) {
         // sample a point from the square with sides -10 - 10 in two dimensions
-        let (x, y) = (rng.sample(side) as u8, rng.sample(side) as u8);
+        let (x, y) = (rng.sample(side) as i32, rng.sample(side) as i32);
         let tmp_city1: City = City::new(Location {
             name: format!("{}", i).to_string(),
             coord: (x, y),
