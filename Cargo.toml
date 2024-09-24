@@ -9,3 +9,9 @@ num-traits = "0.2"
 ndarray = "0.16.1"
 rand = "0.8.5"
 kmedoids = "0.5.2"
+clap = "4.5.17"
+# strum = "0.26"
+strum_macros = "0.26"
+# kmeans = "0.10.0"
+strum = { version = "0.26", features = ["derive"] }
+

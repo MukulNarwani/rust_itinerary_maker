@@ -1,4 +1,6 @@
+#![allow(unused)]
 use ndarray::{array, Array2};
+
 use std::cmp;
 //pub mod city;
 #[derive(Default, Clone, PartialEq, Debug)]
