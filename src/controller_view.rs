@@ -7,7 +7,6 @@ use strum::{EnumIter,IntoEnumIterator};
 enum StateMode{
     List,
     Add,
-    Main,
     Quit
 }
 //impl StateMode{
@@ -17,51 +16,38 @@ enum StateMode{
 //}
 pub struct ControllerView{
     model: State,
-    curr_state:StateMode,
 }
 impl ControllerView{
     pub fn new() -> Self {
-        let mut app = ControllerView{ model : State::default() , curr_state: StateMode::Main  };
-        app.tick();
+        let mut app = ControllerView{ model : State::default()  };
+        app.start();
         app
 
     }
     pub fn add_mode(&self){
-
+        //TODO city builder
+    }
+    pub fn start(&mut self){
+       loop{
+                
+                let response:String = self.input("What mode? ");
+                //println!("{}",response.as_str());
+                match response.as_str() {
+                    "add" => {self.add_mode()},
+                    "list" =>{ self.list_mode()},
+                    "quit" =>{ println!("Have a good day!");break},
+                    x => self.error(x,format!("Valid modes: {:?}",StateMode::iter().collect::<Vec<_>>()).to_string())
+                }
+        }
     }
     pub fn list_mode(&mut self){
-        
         println!("{:?}",self.model.list_cities());
-        self.curr_state = StateMode::Main;
-        self.tick();
     }
-    pub fn main(&mut self){
-        let response:String = self.input("What mode?");
-        println!("{}",response.as_str());
-        match response.as_str() {
-            "Add" => {self.curr_state=StateMode::Add; self.tick()},
-            "List" =>{self.curr_state=StateMode::List; self.tick()},
-            "Quit" =>{self.curr_state=StateMode::Quit; self.tick()},
-            x => self.error(x,format!("Valid modes: {:?}",StateMode::iter().collect::<Vec<_>>()).to_string())
-        }
-    }
-    pub fn tick(&mut self){
-        match self.curr_state{
-            StateMode::Add => self.add_mode(),
-            StateMode::List=> self.list_mode(),
-            StateMode::Main => self.main(),
-            StateMode::Quit => self.quit()
-        }
-    }
-    fn quit(&mut self){
-        println!("Have a good day!")
-    }
+
     pub fn error(&mut self,input:&str,errormsg: String){
         println!("{}",errormsg);
         //println!("{}","list" == "list");
         //println!("You said:{}",input);
-        self.curr_state=StateMode::Main;
-        self.tick();
     }
     fn input(&mut self,prompt: &str) -> String {
          print!("{}", prompt);
@@ -69,7 +55,7 @@ impl ControllerView{
 
         let mut reply = String::new();
         io::stdin().read_line(&mut reply);
-        reply.trim().to_string()
+        reply.trim().to_lowercase().to_string()
         //println!("I got {}" ,reply.clone());
     }
 }
