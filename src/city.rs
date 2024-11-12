@@ -41,6 +41,7 @@ impl City {
     }
     pub fn add_activity(&mut self, activity: Activity) {
         // TODO Push activity if not error
+        // TODO set id when making activity
         self.activities.push(activity)
     }
     pub fn remove_activity(&mut self, id: i32) {
